@@ -28,7 +28,7 @@ const ActivityDetailedSidebar = () => {
                     <Image size='tiny' src={'/assets/user.png'} />
                     <Item.Content verticalAlign='middle'>
                       <Item.Header as='h3'>
-                        <Link to={`#`}>BOB</Link>
+                        <Link to={`#`}>Teodor</Link>
                       </Item.Header>
                       <Item.Extra style={{ color: 'orange' }}>Following</Item.Extra>
                     </Item.Content>

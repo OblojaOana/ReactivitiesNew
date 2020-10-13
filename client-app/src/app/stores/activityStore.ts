@@ -1,9 +1,10 @@
+import { history } from '../..';
 import { IActivity } from './../models/activity';
 import { observable, action, computed, configure, runInAction } from 'mobx';
 import { createContext, SyntheticEvent } from 'react';
 import agent from '../api/agent';
-import { history } from '../..';
 import { toast } from 'react-toastify';
+
 
 configure({enforceActions: 'always'});
 
@@ -34,16 +35,15 @@ class ActivityStore {
       this.loadingInitial = true;
       try {
         const activities = await agent.Activities.list();
-        runInAction(() => {
+        runInAction('loading activities',() => {
           activities.forEach((activity) => {
-            activity.date =new Date(activity.date);
+            activity.date = new Date(activity.date);
             this.activityRegistry.set(activity.id, activity);
           });
           this.loadingInitial = false;
         });
-      
       } catch (error) {
-        runInAction(() => {
+        runInAction('load activities error',() => {
           this.loadingInitial = false;
         });
         console.log(error);
@@ -54,24 +54,23 @@ class ActivityStore {
       let activity = this.getActivity(id);
       if(activity) {
         this.activity = activity;
-        return activity
+        return activity;
       } else {
         this.loadingInitial = true;
         try {
           activity = await agent.Activities.details(id);
-          runInAction(() => {
-            activity.date=new Date(activity.date)
+          runInAction('getting activity',() => {
+            activity.date = new Date(activity.date);
             this.activity = activity;
             this.activityRegistry.set(activity.id, activity);
             this.loadingInitial = false;
           })
           return activity;
         } catch (error) {
-          runInAction(() => {
+          runInAction('get activity error',() => {
             this.loadingInitial = false;
           })
-          
-         console.log(error);
+          console.log(error);
         }
       }
     };
@@ -88,16 +87,16 @@ class ActivityStore {
       this.submitting = true;
       try {
         await agent.Activities.create(activity);
-        runInAction( () => {
+        runInAction('create activity', () => {
           this.activityRegistry.set(activity.id, activity);
           this.submitting = false;
-        });
-        history.push(`/activities/${activity.id}`)
+        })
+        history.push(`/activities/${activity.id}`);
       } catch (error) {
-        runInAction(() => {
+        runInAction('create activity error', () => {
           this.submitting = false;
-        });
-        toast.error('Problem submitting data')
+        })
+        toast.error('Problem submitting data');
         console.log(error.response);
       }
     };
@@ -106,18 +105,18 @@ class ActivityStore {
       this.submitting = true;
       try {
         await agent.Activities.update(activity);
-        runInAction( () => {
+        runInAction('editing activity', () => {
           this.activityRegistry.set(activity.id, activity);
           this.activity = activity;
           this.submitting = false;
         })
-        history.push(`/activities/${activity.id}`)
+        history.push(`/activities/${activity.id}`);
       } catch (error) {
-        runInAction( () => {
+        runInAction('edit activity error', () => {
           this.submitting = false;
-        });
-        toast.error('Problem submitting data')
-        console.log(error);
+        })
+        toast.error('Problem submitting data');
+        console.log(error.response);
       }
     };
 
@@ -126,13 +125,13 @@ class ActivityStore {
       this.target = event.currentTarget.name;
       try {
         await agent.Activities.delete(id);
-        runInAction( () => {
+        runInAction('deleting activity', () => {
           this.activityRegistry.delete(id);
           this.submitting = false;
           this.target = '';
         })
       } catch (error) {
-        runInAction( () => {
+        runInAction('delete activity error', () => {
           this.submitting = false;
           this.target = '';
         })

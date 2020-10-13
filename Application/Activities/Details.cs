@@ -1,11 +1,13 @@
-using System;
-using System.Net;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Errors;
 using Domain;
 using MediatR;
+using System;
 using Persistance;
+using Microsoft.EntityFrameworkCore;
+using Application.Errors;
+using System.Net;
 
 namespace Application.Activities
 {
@@ -13,7 +15,7 @@ namespace Application.Activities
     {
         public class Query : IRequest<Activity>
         {
-            public Guid Id { get; set; }
+            public Guid Id {get; set;}
         }
 
         public class Handler : IRequestHandler<Query, Activity>
@@ -26,14 +28,15 @@ namespace Application.Activities
 
             public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
             {
-                 throw new Exception("computer says no");
                 var activity = await _context.Activities.FindAsync(request.Id);
-
+                
                 if (activity == null)
-                    throw new RestException(HttpStatusCode.NotFound, new { Activity = "Not found" });
+                    throw new RestException(
+                        HttpStatusCode.NotFound, new { activity = "Not Found" });
 
                 return activity;
             }
+
         }
     }
 }

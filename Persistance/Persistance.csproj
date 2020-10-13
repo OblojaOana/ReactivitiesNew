@@ -8,6 +8,5 @@
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    
   </PropertyGroup>
 </Project>
