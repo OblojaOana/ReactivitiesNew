@@ -29,6 +29,7 @@ using AutoMapper;
 using Infrastructure.Photos;
 using Application.Photos;
 using API.SignalR;
+using Application.Profiles;
 
 namespace API
 {
@@ -67,8 +68,8 @@ namespace API
                 cfg.RegisterValidatorsFromAssemblyContaining<Create>();
             });
 
-            services.AddMediatR(typeof(ListActivities.Handler).Assembly);
-            services.AddAutoMapper(typeof(ListActivities.Handler));
+            services.AddMediatR(typeof(ListAct.Handler).Assembly);
+            services.AddAutoMapper(typeof(ListAct.Handler));
             services.AddSignalR();
 
             var builder = services.AddIdentityCore<AppUser>();
@@ -116,6 +117,7 @@ namespace API
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+            services.AddScoped<IProfileReader, ProfileReader>();
             services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
             
         }

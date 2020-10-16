@@ -1,6 +1,6 @@
 import { IPhoto, IProfile } from './../models/profile';
 import { IUser, IUserFormValues } from './../models/user';
-import { IActivity } from './../models/activity';
+import { IActivitiesEnvelope, IActivity } from './../models/activity';
 import axios, { AxiosResponse } from 'axios';
 import { history } from '../..';
 import { toast } from 'react-toastify';
@@ -60,7 +60,8 @@ const requests = {
 }
 
 const Activities = {
-    list: (): Promise<IActivity[]> => requests.get('/activities'),
+    list: (params: URLSearchParams): Promise<IActivitiesEnvelope> =>
+        axios.get('/activities', {params: params}).then(sleep(1000)).then(responseBody),
     details : (id: string) => requests.get(`/activities/${id}`),
     create : (activity: IActivity) => requests.post('/activities', activity ),
     update : (activity: IActivity) => requests.put(`/activities/${activity.id}`, activity ),
@@ -82,7 +83,13 @@ const Profiles = {
     uploadPhoto: (photo: Blob): Promise<IPhoto> => requests.postForm(`/photos`, photo),
     setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
     deletePhoto: (id: string) => requests.delete(`/photos/${id}`),
-    updateProfile: (profile: Partial<IProfile>) => requests.put(`/profiles`, profile)
+    updateProfile: (profile: Partial<IProfile>) => requests.put(`/profiles`, profile),
+    follow: (username: string) => requests.post(`/profiles/${username}/follow`, {}),
+    unfollow: (username: string) => requests.delete(`/profiles/${username}/follow`),
+    listFollowings: (username: string, predicate: string) => requests.get(`/profiles/${username}/follow?predicate=${predicate}`),
+    listActivities: (username: string, predicate: string) => requests.get(`/profiles/${username}/activities?predicate=${predicate}`)
+
+
 
 }
 
